@@ -1,6 +1,4 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-
 from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
@@ -14,17 +12,6 @@ app = FastAPI(
     description="Predicts dog/cat breed from an image",
     version="1.0.0"
 )
-
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 MODEL_PATH = "pet_breed_model_fixed.keras"
 model = load_model(MODEL_PATH)
