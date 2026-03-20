@@ -1,0 +1,10 @@
+# Increase limits for large pet/certificate uploads
+php_value upload_max_filesize 64M
+php_value post_max_size 64M
+php_value memory_limit 256M
+php_value max_execution_time 300
+php_value max_input_time 300
+
+# Optional: Enable rewrite if needed
+# Options +FollowSymLinks
+# RewriteEngine On
