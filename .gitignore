@@ -1,1 +1,25 @@
-__pycache__/ 
+__pycache__/
+
+# Backend sensitive info
+petnexa_API/*.json
+petnexa_API/db_dump.php
+petnexa_API/debug_*.php
+petnexa_API/test_*.php
+petnexa_API/check_*.php
+petnexa_API/*.txt
+petnexa_API/*.sql
+
+# Frontend
+web/node_modules/
+web/dist/
+web/build/
+web/uploads/
+web/*.php
+web/*.txt
+
+# Database and OS
+*.sql
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
