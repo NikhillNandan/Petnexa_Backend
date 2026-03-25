@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../utils/api';
+import { ValidationUtils } from '../utils/ValidationUtils';
 
 /* ─────────── helpers ─────────── */
 const getStrength = (pwd: string) => {
@@ -120,7 +121,10 @@ const RoleSignup = () => {
         setError(null);
         if (pwd !== confirmPwd) { setError("Passwords do not match"); return; }
         if (pwd.length < 8) { setError("Password too short (min 8 chars)"); return; }
-        if (phone.length < 10) { setError("Invalid phone number"); return; }
+        if (!ValidationUtils.isValidPhone(phone)) {
+            setError("Mobile number must be 10 digits and start with 6, 7, 8, or 9.");
+            return;
+        }
 
         setLoading(true);
         try {
@@ -281,11 +285,18 @@ const RoleSignup = () => {
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                                 <div>
                                     <label style={labelStyle}>{activeRole === 'doctor' ? 'Doctor Name' : activeRole === 'spa' ? 'Owner Name' : 'Full Name'} *</label>
-                                    <input required placeholder="Name" value={fullName} onChange={e => setFullName(e.target.value)} onFocus={() => setFocused('fn')} onBlur={() => setFocused(null)} style={inputStyle('fn')} />
+                                    <input required placeholder="Name" value={fullName} onChange={e => setFullName(ValidationUtils.filterName(e.target.value))} onFocus={() => setFocused('fn')} onBlur={() => setFocused(null)} style={inputStyle('fn')} />
                                 </div>
                                 <div>
                                     <label style={labelStyle}>Phone Number *</label>
-                                    <input type="tel" maxLength={10} required placeholder="9876543210" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g,''))} onFocus={() => setFocused('ph')} onBlur={() => setFocused(null)} style={inputStyle('ph')} />
+                                    <input type="tel" maxLength={10} required placeholder="9876543210" value={phone} onChange={e => {
+                                        const filtered = ValidationUtils.filterPhone(e.target.value);
+                                        if (filtered.length > 0 && !/^[6-9]/.test(filtered)) {
+                                            // Optional: Show error or toast here? For now, we just skip updating
+                                            return;
+                                        }
+                                        setPhone(filtered);
+                                    }} onFocus={() => setFocused('ph')} onBlur={() => setFocused(null)} style={inputStyle('ph')} />
                                 </div>
                             </div>
 
@@ -366,7 +377,7 @@ const RoleSignup = () => {
                                 <>
                                     <div>
                                         <label style={labelStyle}>Spa Name *</label>
-                                        <input required placeholder="Spa Name" value={spaName} onChange={e => setSpaName(e.target.value)} onFocus={() => setFocused('sn')} onBlur={() => setFocused(null)} style={inputStyle('sn')} />
+                                        <input required placeholder="Spa Name" value={spaName} onChange={e => setSpaName(ValidationUtils.filterName(e.target.value))} onFocus={() => setFocused('sn')} onBlur={() => setFocused(null)} style={inputStyle('sn')} />
                                     </div>
                                     <div>
                                         <label style={labelStyle}>Services Offered *</label>

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ROOT_URL } from '../utils/constants';
 import { api } from '../utils/api';
+import { ValidationUtils } from '../utils/ValidationUtils';
 import { Camera, Pencil, CheckCircle2, X, Phone, MapPin, CreditCard, User } from 'lucide-react';
 
 const Profile = ({ role: propRole }: { role?: string }) => {
@@ -235,8 +236,8 @@ const Profile = ({ role: propRole }: { role?: string }) => {
                 }
             }
 
-            if (editData.phone.length !== 10 || !/^[0-9]{10}$/.test(editData.phone)) {
-                alert("Phone number must be exactly 10 digits.");
+            if (!ValidationUtils.isValidPhone(editData.phone)) {
+                alert("Mobile number must be exactly 10 digits and start with 6, 7, 8, or 9.");
                 setIsUpdating(false);
                 return;
             }
@@ -405,7 +406,7 @@ const Profile = ({ role: propRole }: { role?: string }) => {
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
                                             <User size={14} /> Full Name
                                         </label>
-                                        <input type="text" required value={editData.full_name} onChange={e => setEditData({ ...editData, full_name: e.target.value })} 
+                                        <input type="text" required value={editData.full_name} onChange={e => setEditData({ ...editData, full_name: ValidationUtils.filterName(e.target.value) })} 
                                             style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', outline: 'none', fontSize: '15px', fontWeight: '600' }} />
                                     </div>
 
@@ -413,7 +414,11 @@ const Profile = ({ role: propRole }: { role?: string }) => {
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
                                             <Phone size={14} /> Phone Number
                                         </label>
-                                        <input type="tel" required pattern="[0-9]{10}" maxLength={10} value={editData.phone} onChange={e => setEditData({ ...editData, phone: e.target.value.replace(/\D/g, '') })} 
+                                        <input type="tel" required maxLength={10} value={editData.phone} onChange={e => {
+                                            const filtered = ValidationUtils.filterPhone(e.target.value);
+                                            if (filtered.length > 0 && !/^[6-9]/.test(filtered)) return;
+                                            setEditData({ ...editData, phone: filtered });
+                                        }} 
                                             style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', outline: 'none', fontSize: '15px', fontWeight: '600' }} />
                                     </div>
 
@@ -456,7 +461,7 @@ const Profile = ({ role: propRole }: { role?: string }) => {
                                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
                                                 🏪 Shop Name
                                             </label>
-                                            <input type="text" value={editData.shop_name} onChange={e => setEditData({ ...editData, shop_name: e.target.value })} 
+                                            <input type="text" value={editData.shop_name} onChange={e => setEditData({ ...editData, shop_name: ValidationUtils.filterName(e.target.value) })} 
                                                 style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', outline: 'none', fontSize: '15px', fontWeight: '600' }} />
                                         </div>
                                     )}
@@ -466,7 +471,7 @@ const Profile = ({ role: propRole }: { role?: string }) => {
                                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>
                                                 🛁 Spa Name
                                             </label>
-                                            <input type="text" value={editData.spa_name} onChange={e => setEditData({ ...editData, spa_name: e.target.value })} 
+                                            <input type="text" value={editData.spa_name} onChange={e => setEditData({ ...editData, spa_name: ValidationUtils.filterName(e.target.value) })} 
                                                 style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0', outline: 'none', fontSize: '15px', fontWeight: '600' }} />
                                         </div>
                                     )}
